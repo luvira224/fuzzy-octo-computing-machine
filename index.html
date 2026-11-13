@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Color Iterations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap">
+<style>
+:root{color-scheme:light;--bg:#eef0f3;--sf:#fff;--ink:#15181d;--mut:#667080;--ln:#dde1e7;--good:#17996a;--lean:#5fa23a;--neu:#7b8798;--warn:#d98e04;--bad:#d6453a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#101318;--sf:#191d24;--ink:#eef0f3;--mut:#929bab;--ln:#2a303a;--good:#34c38f;--lean:#8bcf63;--neu:#9aa6b8;--warn:#f0b032;--bad:#f2675d}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#101318;--sf:#191d24;--ink:#eef0f3;--mut:#929bab;--ln:#2a303a;--good:#34c38f;--lean:#8bcf63;--neu:#9aa6b8;--warn:#f0b032;--bad:#f2675d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin:4px 0 14px}
+h2{font-size:1.05rem;font-weight:700;margin:0 0 10px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.panel{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:16px}
+/* health */
+.hl{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pct{font-size:3.6rem;font-weight:800;line-height:.95;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.pct small{font-size:1.5rem;font-weight:600;color:var(--mut)}
+.st{font-size:1.25rem;font-weight:700;color:var(--c,var(--mut))}
+.win{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:.9rem}
+.win select{background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:5px 8px}
+.bar{height:16px;border-radius:99px;background:var(--ln);overflow:hidden;margin:14px 0 8px}
+.bar i{display:block;height:100%;width:0;background:var(--c,var(--neu));border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1),background .3s}
+.mix{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--ln)}
+.mix i{display:block;height:100%}
+.leg{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 0;font-size:.88rem;color:var(--mut)}
+.leg span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--k);margin-right:6px}
+.hint{margin:10px 0 0;color:var(--mut);font-size:.92rem}
+/* tabs */
+.tabs{display:flex;gap:4px;margin:18px 0 14px;padding:4px;background:var(--ln);border-radius:12px}
+.tabs button{flex:1;border:0;background:none;padding:9px;border-radius:9px;font-weight:600;color:var(--mut)}
+.tabs button[aria-selected="true"]{background:var(--sf);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* forms */
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row input[type=text],.row input[type=number],.row select{flex:1 1 120px;min-width:0;background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:9px 11px}
+.row input[type=color]{width:46px;height:42px;padding:2px;border:1px solid var(--ln);border-radius:10px;background:var(--bg)}
+.row input[type=number]{flex:0 0 76px}
+.go{background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:10px 16px;font-weight:700}
+.chk{display:flex;align-items:center;gap:6px;color:var(--mut);font-size:.9rem}
+.panel+.panel,.panel+.grid,.panel+.list{margin-top:14px}
+/* inventory chips */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.chip{--k:var(--neu);background:var(--sf);border-radius:14px;overflow:hidden;box-shadow:0 0 0 1.5px var(--ln)}
+.chip.k-d{--k:var(--good);box-shadow:0 0 0 3px var(--k)}
+.chip.k-u{--k:var(--bad);box-shadow:0 0 0 3px var(--k)}
+.blk{height:96px}
+.lb{padding:10px 12px 12px;display:grid;gap:8px}
+.lb b{font-weight:700;overflow-wrap:anywhere}
+.hx{color:var(--mut);font-size:.85rem;font-variant-numeric:tabular-nums;margin-top:-6px}
+.qty{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:10px;padding:3px}
+.qty button{width:34px;height:30px;border:0;border-radius:8px;background:var(--sf);font-weight:700;font-size:1.1rem}
+.qty output{font-weight:700;font-variant-numeric:tabular-nums}
+.lb select{width:100%;border:0;border-radius:8px;padding:6px 8px;font-weight:600;font-size:.9rem;background:color-mix(in srgb,var(--k) 18%,var(--sf));color:var(--ink)}
+.rm{border:0;background:none;color:var(--mut);font-size:.82rem;text-align:left;padding:0;text-decoration:underline}
+/* history */
+.list{display:grid;gap:8px;padding:0;margin:0;list-style:none}
+.hrow{--k:var(--neu);display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:10px 12px;border-radius:12px;border-left:6px solid var(--k);background:color-mix(in srgb,var(--k) 12%,var(--sf))}
+.hrow.k-d{--k:var(--good)}.hrow.k-u{--k:var(--bad)}
+.dot{grid-row:span 2;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.hrow b{font-weight:700}
+.hrow .meta{color:var(--mut);font-size:.82rem;grid-column:2}
+.hrow .tag{font-size:.8rem;font-weight:700;color:var(--k)}
+.hrow .x{grid-column:3;grid-row:2;justify-self:end;border:0;background:none;color:var(--mut);font-size:.82rem;text-decoration:underline;padding:0}
+.hrow .note{grid-column:2/4;font-size:.92rem}
+.empty{color:var(--mut);margin:6px 2px;grid-column:1/-1}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.saved{color:var(--mut);font-size:.85rem}
+.alt{background:var(--bg);color:var(--ink);border:1px solid var(--ln)}
+#raw{width:100%;height:120px;margin-top:10px;border:1px solid var(--ln);border-radius:10px;background:var(--bg);color:var(--ink);padding:8px;font:.8rem/1.3 ui-monospace,monospace}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><h1>Color iterations</h1><span class="saved" id="saved">Auto-saves to this browser</span></header>
+
+  <section class="panel" aria-live="polite">
+    <div class="hl">
+      <div><div class="pct" id="pct">—</div><div class="st" id="stat">No history yet</div></div>
+      <label class="win">Looking at <select id="win"><option value="5">last 5</option><option value="10">last 10</option><option value="20">last 20</option><option value="0">all</option></select></label>
+    </div>
+    <div class="bar" role="progressbar" aria-label="Iteration health" aria-valuemin="0" aria-valuemax="100" id="pb"><i id="fill"></i></div>
+    <div class="mix" id="mix"></div>
+    <p class="leg" id="leg"></p>
+    <p class="hint" id="hint">Log an iteration to start the bar.</p>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="inv" aria-selected="true">Inventory</button>
+    <button role="tab" data-tab="his" aria-selected="false">History</button>
+  </div>
+
+  <div id="inv">
+    <form class="panel" id="addF">
+      <h2>Add a color</h2>
+      <div class="row">
+        <input type="color" id="aHex" value="#e4572e" aria-label="Pick color">
+        <input type="text" id="aName" placeholder="Name" maxlength="40" aria-label="Color name">
+        <input type="number" id="aQty" value="1" min="0" aria-label="Quantity">
+        <select id="aDes" aria-label="Designation"><option value="n">Neutral</option><option value="d">Desirable</option><option value="u">Undesirable</option></select>
+        <button class="go" type="submit">Add</button>
+      </div>
+    </form>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="his" hidden>
+    <form class="panel" id="logF">
+      <h2>Log an iteration</h2>
+      <div class="row">
+        <select id="pick" aria-label="Color used"></select>
+        <input type="text" id="note" placeholder="Note (optional)" maxlength="120" aria-label="Note">
+      </div>
+      <div class="row" style="margin-top:10px">
+        <label class="chk"><input type="checkbox" id="ded" checked> Deduct 1 from stock</label>
+        <button class="go" type="submit" style="margin-left:auto">Log it</button>
+      </div>
+    </form>
+    <ul class="list" id="hist"></ul>
+  </div>
+
+  <section class="panel" id="data" style="margin-top:18px">
+    <h2>Save and backup</h2>
+    <p class="hint" style="margin:0 0 10px">Every change saves to this browser automatically. Name your data, then export a JSON file to back it up or move it elsewhere.</p>
+    <div class="row">
+      <input type="text" id="setName" placeholder="File name" maxlength="60" aria-label="JSON file name">
+      <button class="go" type="button" id="exp">Export JSON</button>
+      <button class="go alt" type="button" id="impB">Import JSON</button>
+      <input type="file" id="imp" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint" id="dmsg" role="status"></p>
+    <textarea id="raw" readonly hidden aria-label="JSON to copy"></textarea>
+  </section>
+</main>
+
+<script>
+var KEY='colorIter.v1';
+var S={colors:[],hist:[],win:10,name:'color-iterations',tab:'inv'};
+try{var raw=localStorage.getItem(KEY);if(raw){var o=JSON.parse(raw);S.colors=o.colors||[];S.hist=o.hist||[];S.win=o.win==null?10:o.win;S.name=o.name||S.name}}catch(e){}
+function stamp(ok){var el=document.getElementById('saved');if(!el)return;el.textContent=ok?'Saved to this browser at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'Could not save in this browser. Export a JSON to keep your data.';el.style.color=ok?'':'var(--bad)'}
+function save(){var ok=true;try{localStorage.setItem(KEY,JSON.stringify({colors:S.colors,hist:S.hist,win:S.win,name:S.name}))}catch(e){ok=false}stamp(ok)}
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function uid(){return Math.random().toString(36).slice(2,9)}
+var L={d:'Desirable',n:'Neutral',u:'Undesirable'};
+var K={d:'var(--good)',n:'var(--neu)',u:'var(--bad)'};
+var LADDER=[
+ [80,'Thriving','var(--good)','Your recent picks are landing right where you want them.'],
+ [60,'Looking good','var(--lean)','More wins than misses lately.'],
+ [45,'Steady','var(--neu)','Mostly neutral. Designate more colors to sharpen this reading.'],
+ [30,'Drifting','var(--warn)','Recent picks are moving away from what you want. A couple more could tip it.'],
+ [0,'Off track','var(--bad)','Most recent iterations missed. Try a desirable color next.']
+];
+function des(h){var c=S.colors.find(function(x){return x.id===h.cid});return c?c.d:(h.d||'n')}
+
+function health(){
+  var hs=S.win?S.hist.slice(-S.win):S.hist,N=hs.length,c={d:0,n:0,u:0};
+  hs.forEach(function(h){c[des(h)]++});
+  var score=N?Math.round((c.d+c.n*.5)/N*100):0;
+  var st=N?LADDER.find(function(r){return score>=r[0]}):null;
+  $('#pct').innerHTML=N?score+'<small>%</small>':'—';
+  $('#stat').textContent=st?st[1]:'No history yet';
+  $('#stat').style.setProperty('--c',st?st[2]:'var(--mut)');
+  $('#fill').style.width=score+'%';
+  $('#fill').style.setProperty('--c',st?st[2]:'var(--neu)');
+  $('#pb').setAttribute('aria-valuenow',score);
+  $('#hint').textContent=st?st[3]:'Log an iteration to start the bar.';
+  $('#mix').innerHTML=N?['d','n','u'].map(function(k){return '<i style="width:'+c[k]/N*100+'%;background:'+K[k]+'"></i>'}).join(''):'';
+  $('#leg').innerHTML=['d','n','u'].map(function(k){return '<span style="--k:'+K[k]+'">'+c[k]+' '+L[k].toLowerCase()+'</span>'}).join('');
+  $('#win').value=String(S.win);
+}
+
+function inv(){
+  $('#grid').innerHTML=S.colors.length?S.colors.map(function(c){
+    return '<article class="chip k-'+c.d+'"><div class="blk" style="background:'+esc(c.hex)+'"></div><div class="lb"><b>'+esc(c.name)+'</b><span class="hx">'+esc(c.hex)+'</span>'
+    +'<div class="qty"><button data-act="qm" data-id="'+c.id+'" aria-label="Decrease">−</button><output>'+c.q+'</output><button data-act="qp" data-id="'+c.id+'" aria-label="Increase">+</button></div>'
+    +'<select data-des="'+c.id+'" aria-label="Designation">'+['d','n','u'].map(function(k){return '<option value="'+k+'"'+(c.d===k?' selected':'')+'>'+L[k]+'</option>'}).join('')+'</select>'
+    +'<button class="rm" data-act="del" data-id="'+c.id+'">Remove</button></div></article>'}).join('')
+    :'<p class="empty">No colors yet. Add one above; it stays Neutral until you mark it otherwise.</p>';
+  var cur=$('#pick').value;
+  $('#pick').innerHTML=S.colors.length?S.colors.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+' ('+c.q+' left)</option>'}).join(''):'<option value="">Add a color first</option>';
+  if(cur)$('#pick').value=cur;
+}
+
+function hist(){
+  var fmt={month:'short',day:'numeric',hour:'numeric',minute:'2-digit'};
+  $('#hist').innerHTML=S.hist.length?S.hist.map(function(h,i){
+    var d=des(h);
+    return '<li class="hrow k-'+d+'"><span class="dot" style="background:'+esc(h.hex)+'"></span><b>#'+(i+1)+' '+esc(h.name)+'</b><span class="tag">'+L[d]+'</span>'
+    +'<span class="meta">'+new Date(h.t).toLocaleString([],fmt)+'</span><button class="x" data-act="hdel" data-id="'+h.id+'">Delete</button>'
+    +(h.note?'<span class="note">'+esc(h.note)+'</span>':'')+'</li>'}).reverse().join('')
+    :'<p class="empty">Nothing logged yet. Each iteration you log shapes the health bar above.</p>';
+}
+
+function render(){
+  health();inv();hist();
+  document.querySelectorAll('[data-tab]').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.tab===S.tab))});
+  $('#inv').hidden=S.tab!=='inv';$('#his').hidden=S.tab!=='his';
+}
+
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-tab],[data-act]');if(!t)return;
+  if(t.dataset.tab){S.tab=t.dataset.tab;render();return}
+  var id=t.dataset.id,c=S.colors.find(function(x){return x.id===id}),a=t.dataset.act;
+  if(a==='qm'&&c&&c.q>0)c.q--;
+  else if(a==='qp'&&c)c.q++;
+  else if(a==='del'&&c){S.hist.forEach(function(h){if(h.cid===id)h.d=c.d});S.colors=S.colors.filter(function(x){return x.id!==id})}
+  else if(a==='hdel')S.hist=S.hist.filter(function(h){return h.id!==id});
+  save();render();
+});
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.dataset.des){var c=S.colors.find(function(x){return x.id===t.dataset.des});if(c)c.d=t.value;save();render()}
+  else if(t.id==='win'){S.win=+t.value;save();health()}
+});
+$('#addF').addEventListener('submit',function(e){
+  e.preventDefault();
+  var hex=$('#aHex').value;
+  S.colors.push({id:uid(),hex:hex,name:$('#aName').value.trim()||hex.toUpperCase(),q:Math.max(0,parseInt($('#aQty').value,10)||0),d:$('#aDes').value});
+  $('#aName').value='';$('#aDes').value='n';save();render();
+});
+$('#logF').addEventListener('submit',function(e){
+  e.preventDefault();
+  var c=S.colors.find(function(x){return x.id===$('#pick').value});if(!c)return;
+  S.hist.push({id:uid(),cid:c.id,name:c.name,hex:c.hex,note:$('#note').value.trim(),t:Date.now()});
+  if($('#ded').checked&&c.q>0)c.q--;
+  $('#note').value='';save();render();
+});
+function slug(s){return String(s||'').replace(/[\\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim().replace(/\.json$/i,'')||'color-iterations'}
+function msg(t,bad){var m=$('#dmsg');m.textContent=t;m.style.color=bad?'var(--bad)':''}
+function dd(x){return x==='d'||x==='n'||x==='u'?x:null}
+var HEX=/^#[0-9a-f]{6}$/i;
+$('#setName').value=S.name;
+$('#setName').addEventListener('input',function(){S.name=this.value;save()});
+$('#exp').addEventListener('click',async function(){
+  var nm=slug(S.name);
+  var json=JSON.stringify({app:'color-iterations',name:nm,exportedAt:new Date().toISOString(),colors:S.colors,hist:S.hist,win:S.win},null,2);
+  var d=null;try{d=window.claude?await claude.use('downloads'):null}catch(e){}
+  if(!d){try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=nm+'.json';document.body.appendChild(a);a.click();a.remove()}catch(e){}var r=$('#raw');r.value=json;r.hidden=false;msg('If no download started, copy the JSON below and save it as '+nm+'.json.');return}
+  try{await d.save({filename:nm+'.json',data:json});msg('Exported '+nm+'.json')}catch(e){var c=e&&e.code;msg(c==='declined'?'Export cancelled.':'Export did not complete.',c!=='declined')}
+});
+$('#impB').addEventListener('click',function(){$('#imp').click()});
+$('#imp').addEventListener('change',function(){
+  var inp=this,f=inp.files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var o=JSON.parse(rd.result);
+      if(!Array.isArray(o.colors)||!Array.isArray(o.hist))throw 0;
+      S.colors=o.colors.filter(function(c){return c&&HEX.test(c.hex)}).map(function(c){return{id:String(c.id||uid()),hex:c.hex,name:String(c.name||c.hex),q:Math.max(0,+c.q||0),d:dd(c.d)||'n'}});
+      S.hist=o.hist.filter(function(h){return h&&HEX.test(h.hex)}).map(function(h){return{id:String(h.id||uid()),cid:String(h.cid||''),name:String(h.name||h.hex),hex:h.hex,note:String(h.note||''),t:+h.t||Date.now(),d:dd(h.d)||undefined}});
+      if(o.win!=null)S.win=+o.win;
+      S.name=slug(o.name||f.name);$('#setName').value=S.name;
+      save();render();msg('Imported '+S.colors.length+' colors and '+S.hist.length+' iterations, replacing what was here.');
+    }catch(e){msg('That file is not a Color Iterations JSON.',true)}
+    inp.value='';
+  };
+  rd.readAsText(f);
+});
+render();
+</script>
+</body>
+</html>
